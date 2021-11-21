@@ -12,7 +12,7 @@ class Polynomial:
     def __len__(self):        
         return len(bin(self.bin))-2
 
-    #polynomials are equal when theit binary representation is the same
+    #polynomials are equal when theit\r binary representation is the same
     def __eq__(self,other):
         if other is None:
             return False
@@ -122,6 +122,7 @@ class CRCencoder:
     def setMessage(self,msg):
         self.msg = Polynomial(msg)
     
+    #find generating polynomials with size of (n,k) and saves them into 'self.gPolys' 'self.msg' must be set before
     def findGeneratingPolys(self,n,k):    
         self.gPolys.clear()              
         dividentPoly = self.createDivident(n)        
@@ -137,11 +138,13 @@ class CRCencoder:
             if r == Polynomial('0'):                                                
                 self.gPolys.append(poly)      
    
+   #returns Polynomial in type x^n + 1 used for finding the generating polynomials
     def createDivident(self,n):
         divident = Polynomial(2**n) 
         divident.change(0,1)        
         return divident
 
+    #returns encoded msg, 'self.msg' and 'self.gPoly' must by set before
     def encode(self):
         if self.gPoly==None:
             raise RuntimeError('Before encoding generating Polynomial must be set')
@@ -157,6 +160,7 @@ class CRCencoder:
         encodedMsg = encodedMsg.changeByPoly(r)               
         return encodedMsg
 
+    #returs reminder after polynomial division
     def checkForError(self):
         if self.gPoly==None:
             raise RuntimeError('Before checking message generating Polynomial must be set')
@@ -178,6 +182,7 @@ class CRCencoder:
         decodedMsg.shiftBinary(shiftBy)
         return decodedMsg
 
+    #returns index of found error in 'self.msg'
     def findError(self,reminder):
         msgLen =len(self.msg)
         for x in range(msgLen):
@@ -187,6 +192,7 @@ class CRCencoder:
                 return x
         raise Exception('Error not found, probably because of multiple errors ocurencies, that are not implemented :(')
 
+    #generate Hamming codes types, returns listo of (n,k)
     def generateHammingCodes(self,number):
         codes = []
         for r in range(2,number+2):
@@ -194,7 +200,8 @@ class CRCencoder:
             k=n-r
             codes.append((n,k))
         return codes
-        
+
+    #finds mest Hamming code to use   
     def findCodeType(self):
         if self.msg==None:
             raise RuntimeError('Before encoding Message must be set')
@@ -206,6 +213,7 @@ class CRCencoder:
                 codeType = type
         return codeType
 
+    #find generating polynomial for closest hamming code 'self.msg' must be set before
     def findgGeneratingPolyAutomatic(self):
         if self.msg==None:
             raise RuntimeError('Before finding of generating poly Message must be set')
