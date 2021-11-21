@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import OptionMenu, ttk
+from tkinter import ttk
 from tkinter.constants import END
 
 from CRC import Polynomial,CRCencoder
@@ -177,6 +177,7 @@ class CRC_GUI:
         btn = tk.Button(self.encodeTab,command=self.encode,text="Encode")
         btn.grid(column=1,row = 6)
 
+    #combobox used for selecting g Polys
     def createComBox(self,root,column,row):
         self.dropGPoly = ttk.Combobox(root,width = 15,textvariable = self.clicked,state="readonly")
         self.dropGPoly ['values'] = self.gPolyOptions
@@ -184,6 +185,7 @@ class CRC_GUI:
 
         self.dropGPoly.bind("<<ComboboxSelected>>",self.changeGPoly)
     
+    #input box for specifying custom gPoly
     def createInputBox(self,root,column,row):         
         self.dropGPoly =tk.Entry(root)
         self.dropGPoly.grid(column = column,
@@ -191,6 +193,7 @@ class CRC_GUI:
         reg = self.root.register(self.generatingInputValidation)
         self.dropGPoly.config(validate ="key",validatecommand =(reg, '%d','%S','%P'))
    
+   #callback for message entry
     def messageInputValidation(self,d,S,P):         
         if d == '0':
             #allow removal always
@@ -216,6 +219,7 @@ class CRC_GUI:
                 return True      
         return False
 
+    #callback for gPoly entry
     def generatingInputValidation(self,d,S,P):
         if d == '0':
             #allow removal always
@@ -227,6 +231,7 @@ class CRC_GUI:
             return True    
         return False
 
+    #after change in inputed msg change generating polynomials
     def changeMsg(self,msg):
         self.msgTextLable.config(text=msg)
         if msg == "":
@@ -267,7 +272,7 @@ class CRC_GUI:
                 self.dropGPoly['values'] = self.coder.gPolys
                 self.gPolyOptions = self.coder.gPolys
 
-
+    #callback for selector in combobox for generating polynomials
     def changeGPoly(self,event):
         self.gPolyTextLable.config(text=self.dropGPoly.get())
         self.gPoly=Polynomial(self.dropGPoly.get())
@@ -283,6 +288,7 @@ class CRC_GUI:
             self.gPoly=Polynomial(P)           
             self.gPolyPolyLable.config(text=self.gPoly.getPolynomialRepresentation())
 
+    #updates entry option after checking different option in g poly chck box
     def gPolyCheckBox(self):
         self.dropGPoly.destroy()        
         if self.gPolyType.get() == "auto":
@@ -298,6 +304,7 @@ class CRC_GUI:
             self.polyNEntry.config(state="readonly")
             self.polyKEntry.config(state="readonly")
     
+    #callback for gPoly size (n,k )entry
     def gPolySizeValidation(self,d,S,P,W):        
         if d == '0':
             #allow removal always
@@ -335,6 +342,7 @@ class CRC_GUI:
         
         self.updateEncodedMsg(msg)
 
+    #updates window after encodiging - shows encoded msg
     def updateEncodedMsg(self,msg):
         if self.encodedMsgTextLable is None:
             self.encodedMsgTextLable=ttk.Label(self.encodeTab)  
@@ -469,6 +477,7 @@ class CRC_GUI:
         except:
             pass
 
+    #updates window after decodiging - shows decoded msg
     def updateDecodedMsg(self,msg,errorPos):
         if self.decodedMsgTextLable is None:
             self.decodedMsgTextLable=ttk.Label(self.decodeTab)  
@@ -516,18 +525,9 @@ class CRC_GUI:
                                     padx = 10,
                                     pady = 10) 
 
-    def instertWithSuperscription(self,string,label):
-        label.tag_configure("s", offset=5)
-        s = False
-        for c in string:
-            if c == "^":
-                s = True
-                continue
-            if s == True:
-                label.insert("insert",c,"s")
-                s = False
-                continue
             label.insert("insert",c)
+
+
 gui = CRC_GUI()
 gui.start()
 
